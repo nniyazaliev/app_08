@@ -1,7 +1,5 @@
-import 'dart:developer';
+import 'package:app_08/coin_page.dart';
 
-import 'package:app_08/coin_api_services.dart';
-import 'package:app_08/fake_future_service.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,12 +17,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const CoinPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+/* class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
@@ -102,3 +100,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+ */
