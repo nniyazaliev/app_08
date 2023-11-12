@@ -1,6 +1,9 @@
 import 'dart:developer';
 
+import 'dart:io' show Platform;
+
 import 'package:app_08/constant_datas.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CoinPage extends StatefulWidget {
@@ -11,9 +14,8 @@ class CoinPage extends StatefulWidget {
 }
 
 class _CoinPageState extends State<CoinPage> {
-  double _btcValue = 0;
+  int _btcValue = 1;
   double _fiatMoneyValue = 0;
-  String _fiatMoneyName = 'USD';
 
   String dropdownValue = currencyList.first;
 
@@ -32,21 +34,44 @@ class _CoinPageState extends State<CoinPage> {
     log('items = $items');
   } */
 
-  void _tizmeniAilanypOzgort() {
-    currencyList.map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList();
+  int _selectedItemIndex = (currencyList.length / 2).round();
+
+  Widget buildItemsForiOS() {
+    return CupertinoPicker(
+      magnification: 1.22,
+      squeeze: 1.2,
+      useMagnifier: true,
+      itemExtent: 30,
+      // This sets the initial item.
+      scrollController: FixedExtentScrollController(
+        initialItem: _selectedItemIndex,
+      ),
+      // This is called when selected item is changed.
+      onSelectedItemChanged: (int selectedItem) {
+        setState(() {
+          _selectedItemIndex = selectedItem;
+        });
+      },
+      children: currencyList
+          .map<Widget>((currency) => Center(
+                child: Text(
+                  currency,
+                ),
+              ))
+          .toList(),
+
+      /* List<Widget>.generate(currencyList.length, (int index) {
+        return Center(
+          child: Text(
+            currencyList[index],
+          ),
+        );
+      }), */
+    );
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget _buildDropDown() {
+  Widget buildItemsForAndroid() {
+    //1-chi zholu
     List<DropdownMenuItem<String>> items = [];
 
     for (var currency in currencyList) {
@@ -60,6 +85,7 @@ class _CoinPageState extends State<CoinPage> {
         ),
       );
     }
+    //1-chi choldun aiagy
 
     return DropdownButton<String>(
       value: dropdownValue,
@@ -72,12 +98,32 @@ class _CoinPageState extends State<CoinPage> {
       ),
       onChanged: (String? value) {
         setState(() {
-          log('onChanged value = $value');
           dropdownValue = value!;
         });
       },
       items: items,
     );
+  }
+
+  //2-chi zholu
+  List<DropdownMenuItem<String>> _tizmeniAilanypOzgort() {
+    return currencyList.map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(
+          value,
+          style: const TextStyle(color: Colors.black),
+        ),
+      );
+    }).toList();
+  }
+
+  String getSelectCurrency() {
+    if (Platform.isAndroid) {
+      return currencyList[_selectedItemIndex];
+    } else {
+      return dropdownValue;
+    }
   }
 
   @override
@@ -111,7 +157,7 @@ class _CoinPageState extends State<CoinPage> {
                     vertical: 12.0,
                   ),
                   child: Text(
-                    '$_btcValue BTC = $_fiatMoneyValue $_fiatMoneyName'
+                    '$_btcValue BTC = $_fiatMoneyValue ${getSelectCurrency()}'
                         .toUpperCase(),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
@@ -129,7 +175,8 @@ class _CoinPageState extends State<CoinPage> {
             height: 200,
             width: double.infinity,
             child: Center(
-              child: _buildDropDown(),
+              child:
+                  Platform.isIOS ? buildItemsForAndroid() : buildItemsForiOS(),
             ),
           )
         ],
