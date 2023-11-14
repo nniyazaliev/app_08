@@ -56,23 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     //log('initState => city = $city');
-  }
+  } */
 
-  @override
-  void didChangeDependencies() async {
-    /* _fun1();
-    _fun2();
-    _fun3();
-    _fun4(); */
 
-    await CoinAPIServices().getCurrencyRate();
 
-    //log('didChangeDependencies => city = $city');
-    //await _getCity();
-    super.didChangeDependencies();
-  }
-
-  Future<void> _getCity() async {
+  /* Future<void> _getCity() async {
     city = await FakeFutureService().getCityFromFuture();
     log('_getCity => city = $city');
     setState(() {});
@@ -99,5 +87,4 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
     );
   }
-}
- */
+} */

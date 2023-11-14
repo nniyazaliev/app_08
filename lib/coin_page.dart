@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'dart:io' show Platform;
 
+import 'package:app_08/coin_api_services.dart';
 import 'package:app_08/constant_datas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class CoinPage extends StatefulWidget {
   const CoinPage({Key? key}) : super(key: key);
@@ -36,6 +38,28 @@ class _CoinPageState extends State<CoinPage> {
 
   int _selectedItemIndex = (currencyList.length / 2).round();
 
+  @override
+  void didChangeDependencies() async {
+    //log('didChangeDependencies => city = $city');
+    //await _getCity();
+    await getCurrencyRate(currencyList[_selectedItemIndex]);
+
+    super.didChangeDependencies();
+  }
+
+  Future<void> getCurrencyRate(String currency) async {
+    final response = await CoinAPIServices().getCurrencyRate(
+      currency,
+    );
+
+    log('Response.rate = $response');
+
+    _fiatMoneyValue = (response['rate'] as double).roundToDouble();
+    log('_fiatMoneyValue = $_fiatMoneyValue');
+
+    setState(() {});
+  }
+
   Widget buildItemsForiOS() {
     return CupertinoPicker(
       magnification: 1.22,
@@ -47,7 +71,8 @@ class _CoinPageState extends State<CoinPage> {
         initialItem: _selectedItemIndex,
       ),
       // This is called when selected item is changed.
-      onSelectedItemChanged: (int selectedItem) {
+      onSelectedItemChanged: (int selectedItem) async {
+        await getCurrencyRate(currencyList[selectedItem]);
         setState(() {
           _selectedItemIndex = selectedItem;
         });
