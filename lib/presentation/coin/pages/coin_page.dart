@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'dart:io' show Platform;
 
-import 'package:app_08/coin_api_services.dart';
-import 'package:app_08/constant_datas.dart';
+import 'package:app_08/data/repositories/coin/models/coin_model.dart';
+import 'package:app_08/data/repositories/coin/repositories/coin_repository.dart';
+
+import 'package:app_08/utils/constant_datas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 class CoinPage extends StatefulWidget {
   const CoinPage({Key? key}) : super(key: key);
@@ -16,46 +17,27 @@ class CoinPage extends StatefulWidget {
 }
 
 class _CoinPageState extends State<CoinPage> {
-  int _btcValue = 1;
-  double _fiatMoneyValue = 0;
+  final int _btcValue = 1;
+
+  CoinModel? _coinModel;
 
   String dropdownValue = currencyList.first;
-
-  /* void fillItems() {
-    for (var currency in currencyList) {
-      final dropdownMenuItem = DropdownMenuItem<String>(
-        value: currency,
-        child: Text(currency),
-      );
-
-      log('dropdownMenuItem = ${dropdownMenuItem.value}');
-
-      items.add(dropdownMenuItem);
-    }
-
-    log('items = $items');
-  } */
 
   int _selectedItemIndex = (currencyList.length / 2).round();
 
   @override
-  void didChangeDependencies() async {
-    //log('didChangeDependencies => city = $city');
-    //await _getCity();
-    await getCurrencyRate(currencyList[_selectedItemIndex]);
+  void didChangeDependencies() {
+    getCurrencyRate(currencyList[_selectedItemIndex]);
 
     super.didChangeDependencies();
   }
 
   Future<void> getCurrencyRate(String currency) async {
-    final response = await CoinAPIServices().getCurrencyRate(
+    _coinModel = await CoinRepository().getCurrencyRate(
       currency,
     );
 
-    log('Response.rate = $response');
-
-    _fiatMoneyValue = (response['rate'] as double).roundToDouble();
-    log('_fiatMoneyValue = $_fiatMoneyValue');
+    log('Response.rate = $_coinModel');
 
     setState(() {});
   }
@@ -84,19 +66,10 @@ class _CoinPageState extends State<CoinPage> {
                 ),
               ))
           .toList(),
-
-      /* List<Widget>.generate(currencyList.length, (int index) {
-        return Center(
-          child: Text(
-            currencyList[index],
-          ),
-        );
-      }), */
     );
   }
 
   Widget buildItemsForAndroid() {
-    //1-chi zholu
     List<DropdownMenuItem<String>> items = [];
 
     for (var currency in currencyList) {
@@ -110,7 +83,6 @@ class _CoinPageState extends State<CoinPage> {
         ),
       );
     }
-    //1-chi choldun aiagy
 
     return DropdownButton<String>(
       value: dropdownValue,
@@ -130,7 +102,6 @@ class _CoinPageState extends State<CoinPage> {
     );
   }
 
-  //2-chi zholu
   List<DropdownMenuItem<String>> _tizmeniAilanypOzgort() {
     return currencyList.map<DropdownMenuItem<String>>((String value) {
       return DropdownMenuItem<String>(
@@ -181,16 +152,7 @@ class _CoinPageState extends State<CoinPage> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 12.0,
                   ),
-                  child: Text(
-                    '$_btcValue BTC = $_fiatMoneyValue ${getSelectCurrency()}'
-                        .toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: _buildText(),
                 ),
               ),
             ),
@@ -205,6 +167,28 @@ class _CoinPageState extends State<CoinPage> {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buildText() {
+    if (_coinModel == null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(1.0),
+          child: const CircularProgressIndicator(),
+        ),
+      );
+    } else {}
+
+    return Text(
+      '$_btcValue BTC = ${_coinModel!.rate.toStringAsFixed(2)} ${getSelectCurrency()}'
+          .toUpperCase(),
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
