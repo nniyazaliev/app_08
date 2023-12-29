@@ -4,10 +4,12 @@ import 'dart:io' show Platform;
 
 import 'package:app_08/data/repositories/coin/models/coin_model.dart';
 import 'package:app_08/data/repositories/coin/repositories/coin_repository.dart';
+import 'package:app_08/presentation/coin/providers/coin_page_provider.dart';
 
 import 'package:app_08/utils/constant_datas.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CoinPage extends StatefulWidget {
   const CoinPage({Key? key}) : super(key: key);
@@ -17,6 +19,17 @@ class CoinPage extends StatefulWidget {
 }
 
 class _CoinPageState extends State<CoinPage> {
+  getCola() {
+    return 1;
+  }
+
+  getPepsi(String id) {
+    ///
+    ///
+    ///
+    return 1;
+  }
+
   final int _btcValue = 1;
 
   CoinModel? _coinModel;
@@ -26,20 +39,70 @@ class _CoinPageState extends State<CoinPage> {
   int _selectedItemIndex = (currencyList.length / 2).round();
 
   @override
-  void didChangeDependencies() {
+  void initState() {
     getCurrencyRate(currencyList[_selectedItemIndex]);
-
-    super.didChangeDependencies();
+    super.initState();
   }
 
-  Future<void> getCurrencyRate(String currency) async {
-    _coinModel = await CoinRepository().getCurrencyRate(
-      currency,
-    );
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blueAccent,
+          title: const Text(
+            '🤑 Coin Ticker',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Consumer(
+          builder: (context, ref, child) {
+            final currencyProvider = ref.watch(
+              GetCurrencyRateProvider(currencyList[_selectedItemIndex]),
+            );
 
-    log('Response.rate = $_coinModel');
+            if (currencyProvider.hasError) {
+              return Text(currencyProvider.error.toString());
+            } else if (currencyProvider) {}
 
-    setState(() {});
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const SizedBox(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Card(
+                      elevation: 10,
+                      color: Colors.blue,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                        ),
+                        child: _buildText(),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.blue,
+                  height: 200,
+                  width: double.infinity,
+                  child: Center(
+                    child: Platform.isIOS
+                        ? buildItemsForAndroid()
+                        : buildItemsForiOS(),
+                  ),
+                )
+              ],
+            );
+          },
+        ));
   }
 
   Widget buildItemsForiOS() {
@@ -122,55 +185,6 @@ class _CoinPageState extends State<CoinPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
-        title: const Text(
-          '🤑 Coin Ticker',
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Card(
-                elevation: 10,
-                color: Colors.blue,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                  ),
-                  child: _buildText(),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            color: Colors.blue,
-            height: 200,
-            width: double.infinity,
-            child: Center(
-              child:
-                  Platform.isIOS ? buildItemsForAndroid() : buildItemsForiOS(),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   Widget _buildText() {
     if (_coinModel == null) {
       return Center(
@@ -191,5 +205,13 @@ class _CoinPageState extends State<CoinPage> {
         fontWeight: FontWeight.bold,
       ),
     );
+  }
+
+  Future<void> getCurrencyRate(String currency) async {
+    _coinModel = await CoinRepository().getCurrencyRate(currency);
+
+    log('Response.rate = $_coinModel');
+
+    setState(() {});
   }
 }
