@@ -6,7 +6,7 @@ part of 'coin_page_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getCurrencyRateHash() => r'd203024fea861e3d633183e899976bb016028bcb';
+String _$coinPageNotifierHash() => r'762eab1e52872b68d92eeb5dc8b52d2ce1d62f82';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,30 +29,39 @@ class _SystemHash {
   }
 }
 
-/// See also [getCurrencyRate].
-@ProviderFor(getCurrencyRate)
-const getCurrencyRateProvider = GetCurrencyRateFamily();
+abstract class _$CoinPageNotifier
+    extends BuildlessAutoDisposeAsyncNotifier<ClientCoinPageModel> {
+  late final String currency;
 
-/// See also [getCurrencyRate].
-class GetCurrencyRateFamily extends Family<AsyncValue<CoinModel>> {
-  /// See also [getCurrencyRate].
-  const GetCurrencyRateFamily();
+  FutureOr<ClientCoinPageModel> build(
+    String currency,
+  );
+}
 
-  /// See also [getCurrencyRate].
-  GetCurrencyRateProvider call(
-    dynamic arg,
+/// See also [CoinPageNotifier].
+@ProviderFor(CoinPageNotifier)
+const coinPageNotifierProvider = CoinPageNotifierFamily();
+
+/// See also [CoinPageNotifier].
+class CoinPageNotifierFamily extends Family<AsyncValue<ClientCoinPageModel>> {
+  /// See also [CoinPageNotifier].
+  const CoinPageNotifierFamily();
+
+  /// See also [CoinPageNotifier].
+  CoinPageNotifierProvider call(
+    String currency,
   ) {
-    return GetCurrencyRateProvider(
-      arg,
+    return CoinPageNotifierProvider(
+      currency,
     );
   }
 
   @override
-  GetCurrencyRateProvider getProviderOverride(
-    covariant GetCurrencyRateProvider provider,
+  CoinPageNotifierProvider getProviderOverride(
+    covariant CoinPageNotifierProvider provider,
   ) {
     return call(
-      provider.arg,
+      provider.currency,
     );
   }
 
@@ -68,92 +77,99 @@ class GetCurrencyRateFamily extends Family<AsyncValue<CoinModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getCurrencyRateProvider';
+  String? get name => r'coinPageNotifierProvider';
 }
 
-/// See also [getCurrencyRate].
-class GetCurrencyRateProvider extends AutoDisposeFutureProvider<CoinModel> {
-  /// See also [getCurrencyRate].
-  GetCurrencyRateProvider(
-    dynamic arg,
+/// See also [CoinPageNotifier].
+class CoinPageNotifierProvider extends AutoDisposeAsyncNotifierProviderImpl<
+    CoinPageNotifier, ClientCoinPageModel> {
+  /// See also [CoinPageNotifier].
+  CoinPageNotifierProvider(
+    String currency,
   ) : this._internal(
-          (ref) => getCurrencyRate(
-            ref as GetCurrencyRateRef,
-            arg,
-          ),
-          from: getCurrencyRateProvider,
-          name: r'getCurrencyRateProvider',
+          () => CoinPageNotifier()..currency = currency,
+          from: coinPageNotifierProvider,
+          name: r'coinPageNotifierProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getCurrencyRateHash,
-          dependencies: GetCurrencyRateFamily._dependencies,
+                  : _$coinPageNotifierHash,
+          dependencies: CoinPageNotifierFamily._dependencies,
           allTransitiveDependencies:
-              GetCurrencyRateFamily._allTransitiveDependencies,
-          arg: arg,
+              CoinPageNotifierFamily._allTransitiveDependencies,
+          currency: currency,
         );
 
-  GetCurrencyRateProvider._internal(
+  CoinPageNotifierProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.arg,
+    required this.currency,
   }) : super.internal();
 
-  final dynamic arg;
+  final String currency;
 
   @override
-  Override overrideWith(
-    FutureOr<CoinModel> Function(GetCurrencyRateRef provider) create,
+  FutureOr<ClientCoinPageModel> runNotifierBuild(
+    covariant CoinPageNotifier notifier,
   ) {
+    return notifier.build(
+      currency,
+    );
+  }
+
+  @override
+  Override overrideWith(CoinPageNotifier Function() create) {
     return ProviderOverride(
       origin: this,
-      override: GetCurrencyRateProvider._internal(
-        (ref) => create(ref as GetCurrencyRateRef),
+      override: CoinPageNotifierProvider._internal(
+        () => create()..currency = currency,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        arg: arg,
+        currency: currency,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<CoinModel> createElement() {
-    return _GetCurrencyRateProviderElement(this);
+  AutoDisposeAsyncNotifierProviderElement<CoinPageNotifier, ClientCoinPageModel>
+      createElement() {
+    return _CoinPageNotifierProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetCurrencyRateProvider && other.arg == arg;
+    return other is CoinPageNotifierProvider && other.currency == currency;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, arg.hashCode);
+    hash = _SystemHash.combine(hash, currency.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin GetCurrencyRateRef on AutoDisposeFutureProviderRef<CoinModel> {
-  /// The parameter `arg` of this provider.
-  dynamic get arg;
+mixin CoinPageNotifierRef
+    on AutoDisposeAsyncNotifierProviderRef<ClientCoinPageModel> {
+  /// The parameter `currency` of this provider.
+  String get currency;
 }
 
-class _GetCurrencyRateProviderElement
-    extends AutoDisposeFutureProviderElement<CoinModel>
-    with GetCurrencyRateRef {
-  _GetCurrencyRateProviderElement(super.provider);
+class _CoinPageNotifierProviderElement
+    extends AutoDisposeAsyncNotifierProviderElement<CoinPageNotifier,
+        ClientCoinPageModel> with CoinPageNotifierRef {
+  _CoinPageNotifierProviderElement(super.provider);
 
   @override
-  dynamic get arg => (origin as GetCurrencyRateProvider).arg;
+  String get currency => (origin as CoinPageNotifierProvider).currency;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

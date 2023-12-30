@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'dart:io' show Platform;
 
 import 'package:app_08/data/repositories/coin/models/coin_model.dart';
-import 'package:app_08/data/repositories/coin/repositories/coin_repository.dart';
+
 import 'package:app_08/presentation/coin/providers/coin_page_provider.dart';
 
 import 'package:app_08/utils/constant_datas.dart';
@@ -19,30 +17,11 @@ class CoinPage extends StatefulWidget {
 }
 
 class _CoinPageState extends State<CoinPage> {
-  getCola() {
-    return 1;
-  }
-
-  getPepsi(String id) {
-    ///
-    ///
-    ///
-    return 1;
-  }
-
   final int _btcValue = 1;
-
-  CoinModel? _coinModel;
 
   String dropdownValue = currencyList.first;
 
   int _selectedItemIndex = (currencyList.length / 2).round();
-
-  @override
-  void initState() {
-    getCurrencyRate(currencyList[_selectedItemIndex]);
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,50 +41,52 @@ class _CoinPageState extends State<CoinPage> {
         body: Consumer(
           builder: (context, ref, child) {
             final currencyProvider = ref.watch(
-              GetCurrencyRateProvider(currencyList[_selectedItemIndex]),
+              CoinPageNotifierProvider(currencyList[_selectedItemIndex]),
             );
 
-            if (currencyProvider.hasError) {
-              return Text(currencyProvider.error.toString());
-            } else if (currencyProvider) {}
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Card(
-                      elevation: 10,
-                      color: Colors.blue,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12.0,
+            return switch (currencyProvider) {
+              AsyncError(:final error) => Center(child: Text('Error: $error')),
+              AsyncData(value: final coinModel) => Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Card(
+                          elevation: 10,
+                          color: Colors.blue,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12.0,
+                            ),
+                            child: _buildText(coinModel),
+                          ),
                         ),
-                        child: _buildText(),
                       ),
                     ),
-                  ),
+                    Container(
+                      color: Colors.blue,
+                      height: 200,
+                      width: double.infinity,
+                      child: Center(
+                        child: Platform.isIOS
+                            ? buildItemsForAndroid()
+                            : buildItemsForiOS(ref),
+                      ),
+                    )
+                  ],
                 ),
-                Container(
-                  color: Colors.blue,
-                  height: 200,
-                  width: double.infinity,
-                  child: Center(
-                    child: Platform.isIOS
-                        ? buildItemsForAndroid()
-                        : buildItemsForiOS(),
-                  ),
-                )
-              ],
-            );
+              _ => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+            };
           },
         ));
   }
 
-  Widget buildItemsForiOS() {
+  Widget buildItemsForiOS(WidgetRef ref) {
     return CupertinoPicker(
       magnification: 1.22,
       squeeze: 1.2,
@@ -116,8 +97,9 @@ class _CoinPageState extends State<CoinPage> {
         initialItem: _selectedItemIndex,
       ),
       // This is called when selected item is changed.
-      onSelectedItemChanged: (int selectedItem) async {
-        await getCurrencyRate(currencyList[selectedItem]);
+      onSelectedItemChanged: (int selectedItem) {
+        // ref.read(getCurrencyRateProvider);
+
         setState(() {
           _selectedItemIndex = selectedItem;
         });
@@ -185,18 +167,9 @@ class _CoinPageState extends State<CoinPage> {
     }
   }
 
-  Widget _buildText() {
-    if (_coinModel == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: const CircularProgressIndicator(),
-        ),
-      );
-    } else {}
-
+  Widget _buildText(CoinModel coinModel) {
     return Text(
-      '$_btcValue BTC = ${_coinModel!.rate.toStringAsFixed(2)} ${getSelectCurrency()}'
+      '$_btcValue BTC = ${coinModel.rate.toStringAsFixed(2)} ${getSelectCurrency()}'
           .toUpperCase(),
       textAlign: TextAlign.center,
       style: const TextStyle(
@@ -205,13 +178,5 @@ class _CoinPageState extends State<CoinPage> {
         fontWeight: FontWeight.bold,
       ),
     );
-  }
-
-  Future<void> getCurrencyRate(String currency) async {
-    _coinModel = await CoinRepository().getCurrencyRate(currency);
-
-    log('Response.rate = $_coinModel');
-
-    setState(() {});
   }
 }
