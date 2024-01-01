@@ -44,44 +44,83 @@ class _CoinPageState extends State<CoinPage> {
               CoinPageNotifierProvider(currencyList[_selectedItemIndex]),
             );
 
-            return switch (currencyProvider) {
-              AsyncError(:final error) => Center(child: Text('Error: $error')),
-              AsyncData(value: final coinModel) => Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Card(
-                          elevation: 10,
-                          color: Colors.blue,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12.0,
-                            ),
-                            child: _buildText(coinModel),
+            return currencyProvider.when(
+              data: (coinModel) => Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Card(
+                        elevation: 10,
+                        color: Colors.blue,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12.0,
                           ),
+                          child: _buildText(coinModel),
                         ),
                       ),
                     ),
-                    Container(
-                      color: Colors.blue,
-                      height: 200,
-                      width: double.infinity,
-                      child: Center(
-                        child: Platform.isIOS
-                            ? buildItemsForAndroid()
-                            : buildItemsForiOS(ref),
-                      ),
-                    )
-                  ],
-                ),
-              _ => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-            };
+                  ),
+                  Container(
+                    color: Colors.blue,
+                    height: 200,
+                    width: double.infinity,
+                    child: Center(
+                      child: Platform.isIOS
+                          ? buildItemsForAndroid()
+                          : buildItemsForiOS(ref),
+                    ),
+                  )
+                ],
+              ),
+              error: (error, trace) => Center(child: Text('Error: $error')),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+
+            // return switch (currencyProvider) {
+            //   AsyncError(:final error) => Center(child: Text('Error: $error')),
+            //   AsyncData(value: final coinModel) => Column(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         const SizedBox(),
+            //         Padding(
+            //           padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            //           child: SizedBox(
+            //             width: MediaQuery.of(context).size.width,
+            //             child: Card(
+            //               elevation: 10,
+            //               color: Colors.blue,
+            //               child: Padding(
+            //                 padding: const EdgeInsets.symmetric(
+            //                   vertical: 12.0,
+            //                 ),
+            //                 child: _buildText(coinModel),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //         Container(
+            //           color: Colors.blue,
+            //           height: 200,
+            //           width: double.infinity,
+            //           child: Center(
+            //             child: Platform.isIOS
+            //                 ? buildItemsForAndroid()
+            //                 : buildItemsForiOS(ref),
+            //           ),
+            //         )
+            //       ],
+            //     ),
+            //   _ => const Center(
+            //       child: CircularProgressIndicator(),
+            //     ),
+            // };
           },
         ));
   }

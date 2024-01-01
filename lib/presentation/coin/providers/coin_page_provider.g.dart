@@ -6,7 +6,7 @@ part of 'coin_page_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$coinPageNotifierHash() => r'762eab1e52872b68d92eeb5dc8b52d2ce1d62f82';
+String _$coinPageNotifierHash() => r'f30efe73af1e5ac99d37b5cad735dcd9da4067d1';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,10 +30,10 @@ class _SystemHash {
 }
 
 abstract class _$CoinPageNotifier
-    extends BuildlessAutoDisposeAsyncNotifier<ClientCoinPageModel> {
+    extends BuildlessAutoDisposeAsyncNotifier<CoinModel> {
   late final String currency;
 
-  FutureOr<ClientCoinPageModel> build(
+  FutureOr<CoinModel> build(
     String currency,
   );
 }
@@ -43,7 +43,7 @@ abstract class _$CoinPageNotifier
 const coinPageNotifierProvider = CoinPageNotifierFamily();
 
 /// See also [CoinPageNotifier].
-class CoinPageNotifierFamily extends Family<AsyncValue<ClientCoinPageModel>> {
+class CoinPageNotifierFamily extends Family<AsyncValue<CoinModel>> {
   /// See also [CoinPageNotifier].
   const CoinPageNotifierFamily();
 
@@ -81,8 +81,8 @@ class CoinPageNotifierFamily extends Family<AsyncValue<ClientCoinPageModel>> {
 }
 
 /// See also [CoinPageNotifier].
-class CoinPageNotifierProvider extends AutoDisposeAsyncNotifierProviderImpl<
-    CoinPageNotifier, ClientCoinPageModel> {
+class CoinPageNotifierProvider
+    extends AutoDisposeAsyncNotifierProviderImpl<CoinPageNotifier, CoinModel> {
   /// See also [CoinPageNotifier].
   CoinPageNotifierProvider(
     String currency,
@@ -113,7 +113,7 @@ class CoinPageNotifierProvider extends AutoDisposeAsyncNotifierProviderImpl<
   final String currency;
 
   @override
-  FutureOr<ClientCoinPageModel> runNotifierBuild(
+  FutureOr<CoinModel> runNotifierBuild(
     covariant CoinPageNotifier notifier,
   ) {
     return notifier.build(
@@ -138,7 +138,7 @@ class CoinPageNotifierProvider extends AutoDisposeAsyncNotifierProviderImpl<
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<CoinPageNotifier, ClientCoinPageModel>
+  AutoDisposeAsyncNotifierProviderElement<CoinPageNotifier, CoinModel>
       createElement() {
     return _CoinPageNotifierProviderElement(this);
   }
@@ -157,15 +157,14 @@ class CoinPageNotifierProvider extends AutoDisposeAsyncNotifierProviderImpl<
   }
 }
 
-mixin CoinPageNotifierRef
-    on AutoDisposeAsyncNotifierProviderRef<ClientCoinPageModel> {
+mixin CoinPageNotifierRef on AutoDisposeAsyncNotifierProviderRef<CoinModel> {
   /// The parameter `currency` of this provider.
   String get currency;
 }
 
 class _CoinPageNotifierProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<CoinPageNotifier,
-        ClientCoinPageModel> with CoinPageNotifierRef {
+    extends AutoDisposeAsyncNotifierProviderElement<CoinPageNotifier, CoinModel>
+    with CoinPageNotifierRef {
   _CoinPageNotifierProviderElement(super.provider);
 
   @override
